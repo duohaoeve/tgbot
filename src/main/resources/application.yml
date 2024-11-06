@@ -8,36 +8,7 @@ logging:
       bot:
         tw:
           mapper: debug
-task:
-  poxy:
-    hostname: 119.28.55.50
-    port: 10801
-    userName: 98984
-    passWord: 35133
-  game:
-    token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIweDc0MGY2MGRiNTE2OGU5ZmQ0NGIxYmMwYTc1MTAxYTZjYTkwYTJmNzAiLCJzdWIiOiJ3ZWIiLCJleHAiOjE2ODk5MTE5NzZ9.52M9C-mfUJBuXBTT23UtiK2E8MYQ27x7oU2NBLEmbUM
 
-  http:
-    # newcall重试次数
-    maxRetryCount: 3
-    # 预期状态码
-    expectedStatusCode: 0
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://sh-cynosdbmysql-grp-g1ebxqky.sql.tencentcdb.com:25934/wof?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT&useSSL=false
-    username: root
-    password: tt667788
-    type: com.alibaba.druid.pool.DruidDataSource
-    druid:
-      oracle-pooled-prepared-statements: false
-      pool:
-        prepared-statement-cache-enabled: false
-        prepared-statement-cache-query-size: 0
-
-  jackson:
-    date-format: yyyy-MM-dd
-    time-zone: Asia/Shanghai
 
 mybatis:
   type-aliases-package: tg.bot.tw.entity
