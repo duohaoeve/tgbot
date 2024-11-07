@@ -10,5 +10,5 @@ import java.util.Date;
 public class twDto {
 
     private String username;
-    private Date last_checked;
+    private String last_checked;
 }

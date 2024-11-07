@@ -11,4 +11,7 @@ public interface ActionService {
 
     String referral(Long userId);
 
+
+    String twData(Long userId,String twName);
+
 }

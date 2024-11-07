@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tg.bot.tw.dto.twDto;
+import tg.bot.tw.enums.ActionEnum;
 import tg.bot.tw.req.twReq;
 import tg.bot.tw.service.TwService;
 import tg.bot.tw.utils.HTTP;
@@ -33,9 +34,9 @@ public class TwServiceImpl implements TwService {
     private static final Logger logger = LoggerFactory.getLogger("MyLogger");
     private static final Logger  myLogger = LoggerFactory.getLogger(TwServiceImpl.class);
 
-    @Value("${crypto.sol.url}")
+    @Value("${tg.twbot.url}")
     private String url;
-    @Value("${crypto.sol.key}")
+    @Value("${tg.twbot.key}")
     private String key;
 
 
@@ -48,8 +49,9 @@ public class TwServiceImpl implements TwService {
     @Override
     public String GetName(String userName) {
         twReq req = new twReq();
-        req.setUser(userName);
+        req.setUser(userName).setSince("");
         String body = JSONObject.toJSONString(req);
+        String res = "";
         try {
             String result = http.postJson(url, body, key);
             JSONObject jsonObject = JSONObject.parseObject(result);
@@ -59,11 +61,11 @@ public class TwServiceImpl implements TwService {
             String usernames = twList.stream()
                     .map(twDto::getUsername)
                     .collect(Collectors.joining(", "));
-            String res = "推特改名次数:"+twList.size()+"次。\n"+usernames;
-            return res;
+            res =String.format(ActionEnum.TWTEXT.getText(),twList.size(),usernames);
         } catch (IOException e) {
-            return "获取历史用户名请求异常";
+            res = ActionEnum.TWFAIL.getText();
         }
+        return res;
     }
 
 

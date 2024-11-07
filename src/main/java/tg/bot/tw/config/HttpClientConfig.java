@@ -32,11 +32,11 @@ public class HttpClientConfig {
 
     //默认时间为秒
 
-    private  Long connectTimeout=10000L;
+    private  Long connectTimeout=60000L;
 
-    private Long readTimeout=10000L;
+    private Long readTimeout=60000L;
 
-    private Long writeTimeout=10000L;
+    private Long writeTimeout=60000L;
 //    @Value("${http.maxIdleConnections}")
     private int maxIdleConnections=5;
 

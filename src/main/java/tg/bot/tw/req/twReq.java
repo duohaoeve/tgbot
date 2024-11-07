@@ -1,10 +1,12 @@
 package tg.bot.tw.req;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class twReq {
 
     private String user;

@@ -25,7 +25,7 @@ import java.util.Map;
 
 
 @Component
-public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdateConsumer {
+public class TwBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient telegramClient;
 
@@ -86,7 +86,7 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                     throw new RuntimeException(e);
                 }
 
-            }else if (messageText.equals("/deposit")) {
+            } else if (messageText.equals("/deposit")) {
                 SendMessage message = SendMessage
                         .builder()
                         .chatId(chatId)
@@ -99,7 +99,19 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            }else if (messageText.equals("/referral")) {
+            } else if (messageText.equals("/twdata")) {
+                SendMessage message = SendMessage
+                        .builder()
+                        .chatId(chatId)
+                        .text( ActionEnum.TWDATA.getText())
+                        .build();
+
+                try {
+                    telegramClient.execute(message); // 发送消息
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            } else if (messageText.equals("/referral")) {
                 SendMessage message = SendMessage
                         .builder()
                         .chatId(chatId)
@@ -112,11 +124,12 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                     e.printStackTrace();
                 }
 
-            }else if (messageText.equals("/help")) {
+            } else if (messageText.equals("/help")) {
                 SendMessage message = SendMessage
                         .builder()
                         .chatId(chatId)
                         .text(ActionEnum.HELP.getText())
+                        .parseMode(ParseMode.MARKDOWN)
                         .build();
 
                 try {
@@ -124,11 +137,25 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
+            }else{
+                if (messageText.startsWith("@")) {
+                    String twName = messageText.substring(1);
+                    SendMessage message = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .text(actionService.twData(user_id,twName))
+                            .build();
+                    try {
+                        telegramClient.execute(message); // 发送消息
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             if (userStates.containsKey(chatId) && userStates.get(chatId).equals("awaitDeposit")) {
-                if (messageText.length()<=50){
-                    return ;
+                if (messageText.length() <= 50) {
+                    return;
                 }
 
                 try {
@@ -143,7 +170,7 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                     SendMessage message = SendMessage
                             .builder()
                             .chatId(chatId)
-                            .text(actionService.verifyDeposit(user_id,messageText))
+                            .text(actionService.verifyDeposit(user_id, messageText))
                             .build();
 
                     telegramClient.execute(message); // 发送消息
@@ -157,10 +184,6 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
 
         }
     }
-
-
-
-
 
 
 }

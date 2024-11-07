@@ -40,7 +40,8 @@ public class ActionServiceImpl  implements ActionService {
     private MyWalletService walletService;
     @Autowired
     private SolanaService solanaService;
-
+    @Autowired
+    private TwService twService;
     @Autowired
     private DepositRecordService depositRecordService;
 
@@ -76,6 +77,9 @@ public class ActionServiceImpl  implements ActionService {
     @Transactional(rollbackFor = Exception.class)
     public String deposit(Long userId){
         SysUser checkUser = sysUserService.checkUser(userId);
+        if (checkUser == null){
+            return ActionEnum.FIRST_SEND.getText();
+        }
         return String.format(ActionEnum.DEPOSIT.getText(),checkUser.getAddress(),checkUser.getBalance().toString());
     }
 
@@ -132,11 +136,37 @@ public class ActionServiceImpl  implements ActionService {
     @Transactional(rollbackFor = Exception.class)
     public String referral(Long userId){
         SysUser checkUser = sysUserService.checkUser(userId);
+        if (checkUser == null){
+            return ActionEnum.FIRST_SEND.getText();
+        }
         BigDecimal withdrawAmount = sysUserService.withdrawAmount(userId);
         int referralCount = sysUserService.referralCount(userId);
+
         return String.format(ActionEnum.REFERRAL.getText(),checkUser.getUserName(),checkUser.getSolBalance().toString()
         ,withdrawAmount.toString(),referralCount);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String twData(Long userId,String twName){
+        SysUser checkUser = sysUserService.checkUser(userId);
+        if (checkUser == null){
+            return ActionEnum.FIRST_SEND.getText();
+        }
+        if (checkUser.getBalance()<1){
+            return ActionEnum.BALANCE_ZERO.getText();
+        }
+        String res ="";
+        try {
+            res = twService.GetName(twName);
+            checkUser.setBalance(checkUser.getBalance()-1).setUpdateDate(DateUtils.currentSecond());
+            sysUserService.saveOrUpdate(checkUser);
+        }catch (Exception e){
+            res = ActionEnum.DM.getText();
+        }
+        return res;
+    }
+
 
 
 }

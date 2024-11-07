@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 封装http协议，简化操作
@@ -34,7 +35,11 @@ public class HttpImpl implements HTTP {
     private int expectedStatusCode;
 
     @Autowired
-    private  OkHttpClient httpClient = new OkHttpClient();
+    private  OkHttpClient httpClient = new OkHttpClient().newBuilder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build();
 
     /**
      *
@@ -140,6 +145,9 @@ public class HttpImpl implements HTTP {
      */
     @Override
     public  Call ReqExecuteCall(Request request){
+
+        System.out.println("-----------");
+        System.out.println(DateUtils.currentSecond());
         return httpClient.newCall(request);
     }
 
