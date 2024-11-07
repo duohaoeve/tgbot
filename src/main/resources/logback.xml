@@ -1,0 +1,25 @@
+<configuration>
+
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>C://logs/globle.log</file>
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MyAppender" class="ch.qos.logback.core.ConsoleAppender">
+<!--        <file>D://logs/mytask.log</file>-->
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="MyLogger" level="INFO" additivity="false">
+        <appender-ref ref="MyAppender" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="MyAppender" />
+    </root>
+</configuration>
