@@ -9,6 +9,7 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -78,15 +79,14 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                             .builder()
                             .chatId(chatId)
                             .text(actionService.start(user))
+                            .parseMode(ParseMode.MARKDOWN)
                             .build();
                     telegramClient.execute(message); // 发送消息
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
 
-            }
-
-            if (messageText.equals("/deposit")) {
+            }else if (messageText.equals("/deposit")) {
                 SendMessage message = SendMessage
                         .builder()
                         .chatId(chatId)
@@ -99,17 +99,53 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            } else if (userStates.containsKey(chatId) && userStates.get(chatId).equals("awaitDeposit")) {
-                if (messageText.length()<=50){
-                    return ;
-                }
+            }else if (messageText.equals("/referral")) {
                 SendMessage message = SendMessage
                         .builder()
                         .chatId(chatId)
-                        .text(actionService.verifyDeposit(user_id,messageText))
+                        .text(actionService.referral(user_id))
                         .build();
 
                 try {
+                    telegramClient.execute(message); // 发送消息
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
+            }else if (messageText.equals("/help")) {
+                SendMessage message = SendMessage
+                        .builder()
+                        .chatId(chatId)
+                        .text(ActionEnum.HELP.getText())
+                        .build();
+
+                try {
+                    telegramClient.execute(message); // 发送消息
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (userStates.containsKey(chatId) && userStates.get(chatId).equals("awaitDeposit")) {
+                if (messageText.length()<=50){
+                    return ;
+                }
+
+                try {
+                    SendMessage waitMessage = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .text("Please wait a seconds.")
+                            .build();
+
+                    telegramClient.execute(waitMessage); // 发送消息
+
+                    SendMessage message = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .text(actionService.verifyDeposit(user_id,messageText))
+                            .build();
+
                     telegramClient.execute(message); // 发送消息
                     // 清除状态
                     userStates.remove(chatId);
@@ -118,25 +154,11 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
                 }
             }
 
+
         }
     }
 
-    private void getBalanceHandle(long chatId, String response) {
 
-        BigDecimal amount = solanaService.getBalance(response);
-
-        // 可以发送感谢或确认消息
-        SendMessage message = SendMessage
-                .builder()
-                .chatId(chatId)
-                .text("Your balance: " + amount)
-                .build();
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 
 
 

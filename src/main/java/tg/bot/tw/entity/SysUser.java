@@ -1,6 +1,7 @@
 package tg.bot.tw.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -40,6 +41,11 @@ public class SysUser implements Serializable {
      * 余额
      */
     private Long balance;
+
+    /**
+     * sol余额
+     */
+    private BigDecimal solBalance;
 
     /**
      * 钱包地址

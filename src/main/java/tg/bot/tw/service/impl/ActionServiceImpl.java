@@ -18,6 +18,7 @@ import tg.bot.tw.utils.DateUtils;
 import javax.annotation.Resource;
 import javax.crypto.SecretKey;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 /**
  * <p>
@@ -30,7 +31,6 @@ import java.math.BigDecimal;
 @Service
 public class ActionServiceImpl  implements ActionService {
 
-    //最大尝试次数
     @Value("${crypto.sol.jmKey}")
     private String jmKey;
 
@@ -55,7 +55,7 @@ public class ActionServiceImpl  implements ActionService {
         if (checkUser == null){
             // 生成新的钱包账户
             Account account = new Account();
-            user.setCreateDate(DateUtils.currentSecond()).setBalance(0L);
+            user.setCreateDate(DateUtils.currentSecond()).setBalance(0L).setSolBalance(BigDecimal.ZERO);
             user.setAddress(account.getPublicKey().toString());
             SecretKey secretKey = CryptoUtil.convertToSecretKey(jmKey);
             String encryptedKey = CryptoUtil.encrypt(Utils.bytesToHex(account.getSecretKey()), secretKey);
@@ -63,24 +63,22 @@ public class ActionServiceImpl  implements ActionService {
             wallet.setAddress(account.getPublicKey().toString()).setBaseKey(encryptedKey);
             wallet.setUserId(user.getUserId()).setUserName(user.getUserName());
             wallet.setBalance(BigDecimal.ZERO).setCreateDate(DateUtils.currentSecond());
-            sysUserService.save(user);
-            walletService.save(wallet);
+            sysUserService.saveOrUpdate(user);
+            walletService.saveOrUpdate(wallet);
         }else{
             balance = checkUser.getBalance();
             userName = checkUser.getUserName();
         }
-        return String.format(ActionEnum.START.getText(),balance.toString(), userName);
+        return String.format(ActionEnum.START.getText(),balance.toString(), userName,userName);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String deposit(Long userId){
-
         SysUser checkUser = sysUserService.checkUser(userId);
-        return String.format(ActionEnum.START.getText(),checkUser.getAddress(),checkUser.getBalance().toString());
-
-
+        return String.format(ActionEnum.DEPOSIT.getText(),checkUser.getAddress(),checkUser.getBalance().toString());
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String verifyDeposit(Long userId,String message) {
@@ -111,11 +109,16 @@ public class ActionServiceImpl  implements ActionService {
                     record.setUpdateDate(DateUtils.currentSecond()).setUserId(userId).setUserName(user.getUserName());
                     MyWallet wallet = walletService.getOne(userId);
                     wallet.setBalance(wallet.getBalance().add(record.getAmount())).setUpdateDate(DateUtils.currentSecond());
-                    walletService.save(wallet);
-                    depositRecordService.save(record);
-                    sysUserService.save(user);
+                    walletService.saveOrUpdate(wallet);
+                    depositRecordService.saveOrUpdate(record);
+                    sysUserService.saveOrUpdate(user);
 
-                    return "Deposit Success";
+                    if (user.getLeader() != null){
+                        SysUser leader = sysUserService.getUser(user.getLeader());
+                        leader.setSolBalance(leader.getSolBalance().add(record.getAmount().multiply(BigDecimal.valueOf(0.08)))).setUpdateDate(DateUtils.currentSecond());
+                        sysUserService.saveOrUpdate(leader);
+                    }
+                    return "Deposit Success,Amount="+record.getAmount()+"SOL,times+"+times+".";
                 }else {
                     return "Verify Failed";
                 }
@@ -123,6 +126,16 @@ public class ActionServiceImpl  implements ActionService {
                 return "Verify Failed";
             }
 
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String referral(Long userId){
+        SysUser checkUser = sysUserService.checkUser(userId);
+        BigDecimal withdrawAmount = sysUserService.withdrawAmount(userId);
+        int referralCount = sysUserService.referralCount(userId);
+        return String.format(ActionEnum.REFERRAL.getText(),checkUser.getUserName(),checkUser.getSolBalance().toString()
+        ,withdrawAmount.toString(),referralCount);
     }
 
 

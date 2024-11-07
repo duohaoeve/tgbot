@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tg.bot.tw.dto.twDto;
 import tg.bot.tw.req.twReq;
@@ -31,10 +32,11 @@ public class TwServiceImpl implements TwService {
 
     private static final Logger logger = LoggerFactory.getLogger("MyLogger");
     private static final Logger  myLogger = LoggerFactory.getLogger(TwServiceImpl.class);
-    private static final String url = "toto.oz.xyz/api/metadata/get_past_usernames";
-    private static final String botToken = "8170478387:AAFzBnra_DGYvYAUkTA3seDF_gCFhvDDfko";
-    private static final String key = "81ca4bd673808b121b1d4a4e4a9cb427";
 
+    @Value("${crypto.sol.url}")
+    private String url;
+    @Value("${crypto.sol.key}")
+    private String key;
 
 
     @Override
@@ -48,7 +50,6 @@ public class TwServiceImpl implements TwService {
         twReq req = new twReq();
         req.setUser(userName);
         String body = JSONObject.toJSONString(req);
-        logger.info("-获取历史用户名-"+userName);
         try {
             String result = http.postJson(url, body, key);
             JSONObject jsonObject = JSONObject.parseObject(result);
@@ -58,10 +59,10 @@ public class TwServiceImpl implements TwService {
             String usernames = twList.stream()
                     .map(twDto::getUsername)
                     .collect(Collectors.joining(", "));
-            return usernames;
+            String res = "推特改名次数:"+twList.size()+"次。\n"+usernames;
+            return res;
         } catch (IOException e) {
-            logger.error("获取历史用户名请求异常",e);
-            return null;
+            return "获取历史用户名请求异常";
         }
     }
 

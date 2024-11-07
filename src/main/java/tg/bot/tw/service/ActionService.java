@@ -8,4 +8,7 @@ public interface ActionService {
     String deposit(Long userId);
 
     String verifyDeposit(Long userId,String message);
+
+    String referral(Long userId);
+
 }
