@@ -24,7 +24,6 @@ public class CryptoUtil {
         return keyGen.generateKey();
     }
 
-    // 加密
     public static String encrypt(String data, SecretKey secretKey) throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);

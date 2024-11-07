@@ -8,6 +8,7 @@ import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -20,6 +21,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("my_wallet")
+@Accessors(chain = true)
 public class MyWallet implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,7 +32,7 @@ public class MyWallet implements Serializable {
     /**
      * 用户id
      */
-    private String userId;
+    private Long userId;
 
     /**
      * 用户名
@@ -60,7 +62,7 @@ public class MyWallet implements Serializable {
     /**
      * 备注
      */
-    private Double remark;
+    private String remark;
 
     /**
      * 创建时间

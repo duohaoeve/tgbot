@@ -2,9 +2,12 @@ package tg.bot.tw.entity;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -17,6 +20,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("sys_user")
+@Accessors(chain = true)
 public class SysUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +28,8 @@ public class SysUser implements Serializable {
     /**
      * 用户id
      */
-    private String userId;
+    @TableId(value = "user_id")
+    private Long userId;
 
     /**
      * 用户名
@@ -34,7 +39,7 @@ public class SysUser implements Serializable {
     /**
      * 余额
      */
-    private String balance;
+    private Long balance;
 
     /**
      * 钱包地址
@@ -49,7 +54,7 @@ public class SysUser implements Serializable {
     /**
      * 备注
      */
-    private Double remark;
+    private String remark;
 
     /**
      * 创建时间

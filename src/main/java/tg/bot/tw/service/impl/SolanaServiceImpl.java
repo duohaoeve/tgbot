@@ -8,6 +8,7 @@ import org.p2p.solanaj.core.PublicKey;
 import org.p2p.solanaj.rpc.RpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tg.bot.tw.entity.DepositRecord;
 import tg.bot.tw.req.hlReq;
 import tg.bot.tw.service.SolanaService;
 import tg.bot.tw.utils.HTTP;
@@ -46,7 +47,7 @@ public class SolanaServiceImpl implements SolanaService {
     }
 
     @Override
-    public String verifyTx(String tx) throws JsonProcessingException {
+    public DepositRecord verifyTx(String tx) throws JsonProcessingException {
 
         List<String> list = Collections.singletonList(tx); // 创建只读列表
         hlReq req = new hlReq();
@@ -68,10 +69,9 @@ public class SolanaServiceImpl implements SolanaService {
         Long amount = nativeTransfer.getLong("amount");
         BigDecimal amt = BigDecimal.valueOf(amount).divide(BigDecimal.valueOf(1000000000),5, RoundingMode.HALF_UP);
 
-//        System.out.println("fromUserAccount:" +fromUserAccount);
-//        System.out.println("toUserAccount:" +toUserAccount);
-//        System.out.println("amount:" +amt);
-        String res = "fromUserAccount:" +fromUserAccount+",\ntoUserAccount:" +toUserAccount+",\namount:" +amt;
+        DepositRecord res = new DepositRecord();
+        res.setTx(tx).setAmount(amt).setSender(fromUserAccount).setReceiver(toUserAccount).setCreateDate(timestamp.intValue());
+
         return res;
 
     }

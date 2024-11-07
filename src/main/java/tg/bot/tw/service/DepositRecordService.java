@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface DepositRecordService extends IService<DepositRecord> {
 
+    boolean checkTx(String tx);
 }

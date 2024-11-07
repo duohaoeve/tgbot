@@ -1,5 +1,6 @@
 package tg.bot.tw.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import tg.bot.tw.entity.DepositRecord;
 import tg.bot.tw.mapper.DepositRecordMapper;
 import tg.bot.tw.service.DepositRecordService;
@@ -16,5 +17,16 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DepositRecordServiceImpl extends ServiceImpl<DepositRecordMapper, DepositRecord> implements DepositRecordService {
+
+    @Override
+    public boolean checkTx(String tx){
+        QueryWrapper<DepositRecord> wrapper = new QueryWrapper();
+        wrapper.eq("tx", tx);
+        int count = baseMapper.selectCount(wrapper);
+        if (count == 0){
+            return true;
+        }
+        return false;
+    };
 
 }

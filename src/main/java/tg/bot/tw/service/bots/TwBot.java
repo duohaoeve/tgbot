@@ -13,6 +13,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import tg.bot.tw.entity.SysUser;
+import tg.bot.tw.enums.ActionEnum;
+import tg.bot.tw.service.ActionService;
 import tg.bot.tw.service.SolanaService;
 
 import java.math.BigDecimal;
@@ -32,6 +35,9 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
 
     @Autowired
     private SolanaService solanaService;
+
+    @Autowired
+    private ActionService actionService;
 
     @Autowired
     public TwBot(@Value("${tg.twbot.token}") String botToken) {
@@ -56,64 +62,62 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
         // 检查更新是否包含消息
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
-
+            long user_id = update.getMessage().getChat().getId();
             // 检查是否是/start命令
             if (messageText.startsWith("/start")) {
                 String[] parts = messageText.split(" ");
+                String inviteCode = "";
                 if (parts.length > 1) {
-                    String inviteCode = parts[1]; // 获取haigexz
-                    // 处理你的 inviteCode
-                    handleInviteCode(inviteCode, chatId);
+                    inviteCode = parts[1];
                 }
-            }
-
-            if (messageText.equals("/getBalance")) {
-                String replyMessageText = "Please send a address."; // 响应消息文本
-                SendMessage message = SendMessage
-                        .builder()
-                        .chatId(chatId)
-                        .text(replyMessageText)
-                        .build();
-
+                String user_username = update.getMessage().getChat().getUserName();
+                SysUser user = new SysUser();
+                user.setUserId(user_id).setUserName(user_username).setLeader(inviteCode);
                 try {
+                    SendMessage message = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .text(actionService.start(user))
+                            .build();
                     telegramClient.execute(message); // 发送消息
-                    userStates.put(chatId, "awaitgetBalance"); // 更新用户状态
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-            } else if (userStates.containsKey(chatId) && userStates.get(chatId).equals("awaitgetBalance")) {
-                // 用户的回复处理
-                String userResponse = messageText;
-                getBalanceHandle(chatId, userResponse);
-
-                // 清除状态
-                userStates.remove(chatId);
-            } else if (messageText.equals("/verifyTx")) {
-                String replyMessageText = "Please send a tx."; // 响应消息文本
-                SendMessage message = SendMessage
-                        .builder()
-                        .chatId(chatId)
-                        .text(replyMessageText)
-                        .build();
-
-                try {
-                    telegramClient.execute(message); // 发送消息
-                    userStates.put(chatId, "awaitverifyTx"); // 更新用户状态
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-            } else if (userStates.containsKey(chatId) && userStates.get(chatId).equals("awaitverifyTx")) {
-                // 用户的回复处理
-                String userResponse = messageText;
-                try {
-                    verifyTxHandle(chatId, userResponse);
-                } catch (JsonProcessingException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
 
-                // 清除状态
-                userStates.remove(chatId);
             }
+
+            if (messageText.equals("/deposit")) {
+                SendMessage message = SendMessage
+                        .builder()
+                        .chatId(chatId)
+                        .text(actionService.deposit(user_id))
+                        .build();
+
+                try {
+                    telegramClient.execute(message); // 发送消息
+                    userStates.put(chatId, "awaitDeposit"); // 更新用户状态
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            } else if (userStates.containsKey(chatId) && userStates.get(chatId).equals("awaitDeposit")) {
+                if (messageText.length()<=50){
+                    return ;
+                }
+                SendMessage message = SendMessage
+                        .builder()
+                        .chatId(chatId)
+                        .text(actionService.verifyDeposit(user_id,messageText))
+                        .build();
+
+                try {
+                    telegramClient.execute(message); // 发送消息
+                    // 清除状态
+                    userStates.remove(chatId);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 
@@ -134,37 +138,7 @@ public class TwBot implements SpringLongPollingBot,LongPollingSingleThreadUpdate
         }
     }
 
-    private void verifyTxHandle(long chatId, String response) throws JsonProcessingException {
 
-        String res = solanaService.verifyTx(response);
 
-        // 可以发送感谢或确认消息
-        SendMessage message = SendMessage
-                .builder()
-                .chatId(chatId)
-                .text(res)
-                .build();
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void handleInviteCode(String inviteCode, long chatId) {
-
-        String res = "Your inviteCode:"+inviteCode;
-
-        // 可以发送感谢或确认消息
-        SendMessage message = SendMessage
-                .builder()
-                .chatId(chatId)
-                .text(res)
-                .build();
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 }

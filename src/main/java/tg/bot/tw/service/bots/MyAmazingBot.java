@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+//@Component
 public class MyAmazingBot implements SpringLongPollingBot,LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient telegramClient;
@@ -29,11 +29,11 @@ public class MyAmazingBot implements SpringLongPollingBot,LongPollingSingleThrea
     @Value("${tg.twbot.token}")
     private String botToken;
 
-    @Autowired
+//    @Autowired
     private SolanaService solanaService;
 
 
-    @Autowired
+//    @Autowired
     public MyAmazingBot(@Value("${tg.twbot.token}") String botToken) {
         this.botToken = botToken;
         this.telegramClient = new OkHttpTelegramClient(botToken);
@@ -136,19 +136,19 @@ public class MyAmazingBot implements SpringLongPollingBot,LongPollingSingleThrea
 
     private void verifyTxHandle(long chatId, String response) throws JsonProcessingException {
 
-        String res = solanaService.verifyTx(response);
-
-        // 可以发送感谢或确认消息
-        SendMessage message = SendMessage
-                .builder()
-                .chatId(chatId)
-                .text(res)
-                .build();
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+//        String res = solanaService.verifyTx(response);
+//
+//        // 可以发送感谢或确认消息
+//        SendMessage message = SendMessage
+//                .builder()
+//                .chatId(chatId)
+//                .text(res)
+//                .build();
+//        try {
+//            telegramClient.execute(message);
+//        } catch (TelegramApiException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void handleInviteCode(String inviteCode, long chatId) {
