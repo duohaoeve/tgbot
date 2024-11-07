@@ -8,6 +8,17 @@ logging:
       bot:
         tw:
           mapper: debug
+task:
+  poxy:
+    hostname: 119.28.55.50
+    port: 10801
+    userName: 98984
+    passWord: 35133
+  http:
+    # newcall重试次数
+    maxRetryCount: 3
+    # 预期状态码
+    expectedStatusCode: 0
 
 
 mybatis:
