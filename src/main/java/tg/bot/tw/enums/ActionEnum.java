@@ -2,15 +2,7 @@ package tg.bot.tw.enums;
 
 
 public enum ActionEnum {
-    /**
-     * World of fairy
-     */
-//    START("START", "\uD83D\uDE80 TwDataBot: Your Gateway to MeMe DeFi \uD83E\uDD16\n" +
-//            "     Telegram | [Twitter](https://x.com/shaohaoxz) | Website \n" +
-//            "    \n" +
-//            "    ⬩ Balance: %s times\n"+
-//            "    \n" +
-//            "     Your referral link: https://t.me/twdata_bot?start=%s"),
+
 
     START("START", "\uD83D\uDE80 TwDataBot: Your Gateway to MeMe DeFi \uD83E\uDD16  \n" +
             "       [Twitter](https://x.com/shaohaoxz) | [Support](https://t.me/shaohao_gem)   \n" +
@@ -25,9 +17,9 @@ public enum ActionEnum {
             "\n" +
             "Send /help get help."),
 
-    SIGNIN_FAIL("SIGNIN_FAIL", "今天你已经签到过了!"),
+    SIGNIN_FAIL("SIGNIN_FAIL", "You have already sign in today!"),
 
-    SIGNIN_SUCCESS("SIGNIN_SUCCESS", "签到成功！次数+1"),
+    SIGNIN_SUCCESS("SIGNIN_SUCCESS", "Sign in successful! Times+1"),
 
     DEPOSIT("DEPOSIT", "Deposite solana address:\n" +
             " %s" +
@@ -64,12 +56,22 @@ public enum ActionEnum {
             "\n" +
             "@shaohaoxz")),
 
-    TWTEXT("TWTEXT", ( "推特改名次数: %s次。  " +
+    TWTEXT("TWTEXT", ( "Number of Twitter name changes: %s times。  " +
             "\n" +
             "%s")),
-    TWFAIL("TWFAIL", ( "获取历史用户名请求异常")),
+    TWFAIL("TWFAIL", ( "Exception in obtaining historical username request.")),
 
-    TW_NO_DATA("TW_NO_DATA", ( "未获取到有效的推特用户。"))
+    TW_NO_DATA("TW_NO_DATA", ( "No valid Twitter users were obtained.")),
+
+    WITHDRAWAL_SOL("WITHDRAWAL_SOL", ( "WITHDRAWAL_SOL")),
+
+    DO_WITHDRAWAL("DO_WITHDRAWAL", ( "Withdrawal function is under development." + "\n" +
+            "[Support](https://t.me/shaohao_gem)."))
+    ,
+    DEPOSIT_SUCCESS("DEPOSIT_SUCCESS", ( "Deposit Success,Amount= %s SOL,times+ %s.")),
+
+    VERIFY_FAILED("VERIFY_FAILED", ( "Verify Failed."))
+
             ;
 
     private String action;

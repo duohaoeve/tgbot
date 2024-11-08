@@ -6,6 +6,8 @@ public interface ActionService {
 
     String start(SysUser user) throws Exception;
 
+    boolean setLanguage(Long userId,String code);
+
     String signIn(Long userId);
 
     String deposit(Long userId);
@@ -16,5 +18,15 @@ public interface ActionService {
 
 
     String twData(Long userId,String twName);
+
+    String help(Long userId);
+
+    String withdrawal_sol(Long userId);
+
+    String do_withdrawal(Long userId);
+
+    String twData(Long userId);
+
+
 
 }

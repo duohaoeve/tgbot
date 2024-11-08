@@ -66,6 +66,11 @@ public class SysUser implements Serializable {
     private Date signInDate;
 
     /**
+     * 语言
+     */
+    private String languages;
+
+    /**
      * 备注
      */
     private String remark;

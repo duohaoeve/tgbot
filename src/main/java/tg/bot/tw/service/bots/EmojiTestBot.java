@@ -55,25 +55,25 @@ public class EmojiTestBot implements LongPollingSingleThreadUpdateConsumer {
                     e.printStackTrace();
                 }
             }
-        }else if (update.hasCallbackQuery()) {
-        // Set variables
-        String call_data = update.getCallbackQuery().getData();
-        long message_id = update.getCallbackQuery().getMessage().getMessageId();
-        long chat_id = update.getCallbackQuery().getMessage().getChatId();
+        } else if (update.hasCallbackQuery()) {
+            // Set variables
+            String call_data = update.getCallbackQuery().getData();
+            long message_id = update.getCallbackQuery().getMessage().getMessageId();
+            long chat_id = update.getCallbackQuery().getMessage().getChatId();
 
-        if (call_data.equals("update_msg_text")) {
-            String answer = "you are great";
-            EditMessageText new_message = EditMessageText.builder()
-                    .chatId(chat_id)
-                    .messageId(toIntExact(message_id))
-                    .text(answer)
-                    .build();
-            try {
-                telegramClient.execute(new_message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+            if (call_data.equals("update_msg_text")) {
+                String answer = "you are great";
+                EditMessageText new_message = EditMessageText.builder()
+                        .chatId(chat_id)
+                        .messageId(toIntExact(message_id))
+                        .text(answer)
+                        .build();
+                try {
+                    telegramClient.execute(new_message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }
     }
 }
