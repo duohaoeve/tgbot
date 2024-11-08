@@ -27,6 +27,8 @@ public interface ActionService {
 
     String twData(Long userId);
 
+    String waiting(Long userId);
+
 
 
 }

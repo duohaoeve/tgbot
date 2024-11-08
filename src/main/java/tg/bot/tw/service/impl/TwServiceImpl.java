@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tg.bot.tw.dto.twDto;
 import tg.bot.tw.enums.ActionEnum;
+import tg.bot.tw.enums.ActionZnEnum;
 import tg.bot.tw.req.twReq;
 import tg.bot.tw.service.TwService;
 import tg.bot.tw.utils.HTTP;
@@ -47,7 +48,7 @@ public class TwServiceImpl implements TwService {
 
 
     @Override
-    public String GetName(String userName) {
+    public String GetName(String userName,String language) {
         twReq req = new twReq();
         req.setUser(userName).setSince("");
         String body = JSONObject.toJSONString(req);
@@ -62,11 +63,23 @@ public class TwServiceImpl implements TwService {
                     .map(twDto::getUsername)
                     .collect(Collectors.joining(", "));
             if (usernames.equals("null")){
-                return ActionEnum.TW_NO_DATA.getText();
+                if (language == null || language.equals("EN")) {
+                    return ActionEnum.TW_NO_DATA.getText();
+                } else {
+                    return ActionZnEnum.TW_NO_DATA.getText();
+                }
             }
-            res =String.format(ActionEnum.TWTEXT.getText(),twList.size(),usernames);
+            if (language == null || language.equals("EN")) {
+                res =String.format(ActionEnum.TWTEXT.getText(),twList.size(),usernames);
+            } else {
+                res =String.format(ActionZnEnum.TWTEXT.getText(),twList.size(),usernames);
+            }
         } catch (IOException e) {
-            res = ActionEnum.TWFAIL.getText();
+            if (language == null || language.equals("EN")) {
+                res = ActionEnum.TWFAIL.getText();
+            } else {
+                res = ActionZnEnum.TWFAIL.getText();
+            }
         }
         return res;
     }

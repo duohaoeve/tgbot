@@ -70,7 +70,9 @@ public enum ActionEnum {
     ,
     DEPOSIT_SUCCESS("DEPOSIT_SUCCESS", ( "Deposit Success,Amount= %s SOL,times+ %s.")),
 
-    VERIFY_FAILED("VERIFY_FAILED", ( "Verify Failed."))
+    VERIFY_FAILED("VERIFY_FAILED", ( "Verify Failed.")),
+
+    WAIT("WAIT", ( "Please wait a seconds."))
 
             ;
 

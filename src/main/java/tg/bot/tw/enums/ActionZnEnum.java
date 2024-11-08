@@ -73,7 +73,9 @@ public enum ActionZnEnum {
 
     DEPOSIT_SUCCESS("DEPOSIT_SUCCESS", "存款成功，金额 = %s SOL，次数 + %s。"),
 
-    VERIFY_FAILED("VERIFY_FAILED", "验证失败。")
+    VERIFY_FAILED("VERIFY_FAILED", "验证失败。"),
+
+    WAIT("WAIT", ( "请稍等。"))
 
             ;
 

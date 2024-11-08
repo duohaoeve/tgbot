@@ -175,7 +175,7 @@ public class TwBot implements SpringLongPollingBot, LongPollingSingleThreadUpdat
                     SendMessage waitMessage = SendMessage
                             .builder()
                             .chatId(chatId)
-                            .text("Please wait a seconds.")
+                            .text(actionService.waiting(user_id))
                             .build();
 
                     telegramClient.execute(waitMessage); // 发送消息

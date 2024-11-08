@@ -234,7 +234,7 @@ public class ActionServiceImpl implements ActionService {
         }
         String res = "";
         try {
-            res = twService.GetName(twName);
+            res = twService.GetName(twName,checkUser.getLanguages());
             checkUser.setBalance(checkUser.getBalance() - 1).setUpdateDate(DateUtils.currentSecond());
             sysUserService.saveOrUpdate(checkUser);
         } catch (Exception e) {
@@ -284,6 +284,16 @@ public class ActionServiceImpl implements ActionService {
             return ActionEnum.TWDATA.getText();
         } else {
             return ActionZnEnum.TWDATA.getText();
+        }
+    }
+
+    @Override
+    public String waiting(Long userId) {
+        SysUser checkUser = sysUserService.checkUser(userId);
+        if (checkUser.getLanguages() == null || checkUser.getLanguages().equals("EN")) {
+            return ActionEnum.WAIT.getText();
+        } else {
+            return ActionZnEnum.WAIT.getText();
         }
     }
 
