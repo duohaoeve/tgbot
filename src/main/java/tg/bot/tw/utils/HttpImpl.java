@@ -34,11 +34,13 @@ public class HttpImpl implements HTTP {
     @Value("${task.http.expectedStatusCode}")
     private int expectedStatusCode;
 
+//    @Autowired
+//    private  OkHttpClient httpClient = new OkHttpClient();
     @Autowired
     private  OkHttpClient httpClient = new OkHttpClient().newBuilder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(300, TimeUnit.SECONDS)
+            .readTimeout(300, TimeUnit.SECONDS)
+            .writeTimeout(300, TimeUnit.SECONDS)
             .build();
 
     /**

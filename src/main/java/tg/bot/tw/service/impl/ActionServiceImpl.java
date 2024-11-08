@@ -19,6 +19,10 @@ import javax.annotation.Resource;
 import javax.crypto.SecretKey;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  * <p>
@@ -56,7 +60,7 @@ public class ActionServiceImpl  implements ActionService {
         if (checkUser == null){
             // 生成新的钱包账户
             Account account = new Account();
-            user.setCreateDate(DateUtils.currentSecond()).setBalance(0L).setSolBalance(BigDecimal.ZERO);
+            user.setCreateDate(DateUtils.currentSecond()).setBalance(1L).setSolBalance(BigDecimal.ZERO);
             user.setAddress(account.getPublicKey().toString());
             SecretKey secretKey = CryptoUtil.convertToSecretKey(jmKey);
             String encryptedKey = CryptoUtil.encrypt(Utils.bytesToHex(account.getSecretKey()), secretKey);
@@ -71,6 +75,27 @@ public class ActionServiceImpl  implements ActionService {
             userName = checkUser.getUserName();
         }
         return String.format(ActionEnum.START.getText(),balance.toString(), userName,userName);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String signIn(Long userId){
+        SysUser user = sysUserService.checkUser(userId);
+        if (user == null){
+            return ActionEnum.FIRST_SEND.getText();
+        }
+        LocalDate today = LocalDate.now();
+        if (user.getSignInDate() != null) {
+            Instant instant = user.getSignInDate().toInstant();
+            LocalDate signInDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+            if (user.getSignInDate() != null && signInDate.isEqual(today)) {
+                return ActionEnum.SIGNIN_FAIL.getText();
+            }
+        }
+        user.setBalance(user.getBalance() + 1).setSignInDate(new Date()).setUpdateDate(DateUtils.currentSecond());
+        sysUserService.saveOrUpdate(user);
+        return ActionEnum.SIGNIN_SUCCESS.getText();
+
     }
 
     @Override

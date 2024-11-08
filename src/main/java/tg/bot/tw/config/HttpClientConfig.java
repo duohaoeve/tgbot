@@ -32,11 +32,11 @@ public class HttpClientConfig {
 
     //默认时间为秒
 
-    private  Long connectTimeout=60000L;
+    private  Long connectTimeout=300L;
 
-    private Long readTimeout=60000L;
+    private Long readTimeout=300L;
 
-    private Long writeTimeout=60000L;
+    private Long writeTimeout=300L;
 //    @Value("${http.maxIdleConnections}")
     private int maxIdleConnections=5;
 
@@ -50,9 +50,9 @@ public class HttpClientConfig {
     public OkHttpClient okHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         ConnectionPool connectionPool = new ConnectionPool(maxIdleConnections, keepAliveDurationNs, TimeUnit.MINUTES);
-        builder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
-        builder.readTimeout(readTimeout, TimeUnit.MILLISECONDS);
-        builder.writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(connectTimeout, TimeUnit.SECONDS);
+        builder.readTimeout(readTimeout, TimeUnit.SECONDS);
+        builder.writeTimeout(writeTimeout, TimeUnit.SECONDS);
         builder.retryOnConnectionFailure(retryOnConnectionFailure);
         builder.connectionPool(connectionPool);
 //        builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(hostname, port)));

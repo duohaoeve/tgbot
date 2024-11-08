@@ -61,6 +61,9 @@ public class TwServiceImpl implements TwService {
             String usernames = twList.stream()
                     .map(twDto::getUsername)
                     .collect(Collectors.joining(", "));
+            if (usernames.equals("null")){
+                return ActionEnum.TW_NO_DATA.getText();
+            }
             res =String.format(ActionEnum.TWTEXT.getText(),twList.size(),usernames);
         } catch (IOException e) {
             res = ActionEnum.TWFAIL.getText();

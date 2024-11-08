@@ -86,11 +86,25 @@ public class TwBot implements SpringLongPollingBot, LongPollingSingleThreadUpdat
                     throw new RuntimeException(e);
                 }
 
-            } else if (messageText.equals("/deposit")) {
+            } else if (messageText.equals("/qd")) {
+                SendMessage message = SendMessage
+                        .builder()
+                        .chatId(chatId)
+                        .text(actionService.signIn(user_id))
+//                        .parseMode(ParseMode.MARKDOWN)
+                        .build();
+
+                try {
+                    telegramClient.execute(message); // 发送消息
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }  else if (messageText.equals("/deposit")) {
                 SendMessage message = SendMessage
                         .builder()
                         .chatId(chatId)
                         .text(actionService.deposit(user_id))
+//                        .parseMode(ParseMode.MARKDOWN)
                         .build();
 
                 try {
@@ -140,10 +154,12 @@ public class TwBot implements SpringLongPollingBot, LongPollingSingleThreadUpdat
             }else{
                 if (messageText.startsWith("@")) {
                     String twName = messageText.substring(1);
+                    Integer replyToMessageId = update.getMessage().getMessageId();
                     SendMessage message = SendMessage
                             .builder()
                             .chatId(chatId)
                             .text(actionService.twData(user_id,twName))
+                            .replyToMessageId(replyToMessageId)
                             .build();
                     try {
                         telegramClient.execute(message); // 发送消息

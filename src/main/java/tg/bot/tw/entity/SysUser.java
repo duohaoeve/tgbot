@@ -2,6 +2,8 @@ package tg.bot.tw.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -56,6 +58,12 @@ public class SysUser implements Serializable {
      * 上级
      */
     private String leader;
+
+
+    /**
+     * 签到时间
+     */
+    private Date signInDate;
 
     /**
      * 备注
