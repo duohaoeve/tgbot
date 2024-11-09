@@ -61,7 +61,7 @@ public class ActionServiceImpl implements ActionService {
             // 生成新的钱包账户
             Account account = new Account();
             user.setCreateDate(DateUtils.currentSecond()).setBalance(1L).setSolBalance(BigDecimal.ZERO);
-            user.setAddress(account.getPublicKey().toString()).setLanguages("ZN");
+            user.setAddress(account.getPublicKey().toString()).setLanguages("ZN").setTax(new BigDecimal("0.08"));
             SecretKey secretKey = CryptoUtil.convertToSecretKey(jmKey);
             String encryptedKey = CryptoUtil.encrypt(Utils.bytesToHex(account.getSecretKey()), secretKey);
             MyWallet wallet = new MyWallet();
@@ -175,7 +175,7 @@ public class ActionServiceImpl implements ActionService {
 
                 if (user.getLeader() != null) {
                     SysUser leader = sysUserService.getUser(user.getLeader());
-                    leader.setSolBalance(leader.getSolBalance().add(record.getAmount().multiply(BigDecimal.valueOf(0.08)))).setUpdateDate(DateUtils.currentSecond());
+                    leader.setSolBalance(leader.getSolBalance().add(record.getAmount().multiply(user.getTax()))).setUpdateDate(DateUtils.currentSecond());
                     sysUserService.saveOrUpdate(leader);
                 }
                 if (user.getLanguages() == null || user.getLanguages().equals("EN")) {
@@ -211,10 +211,10 @@ public class ActionServiceImpl implements ActionService {
         int referralCount = sysUserService.referralCount(userId);
         if (checkUser.getLanguages() == null || checkUser.getLanguages().equals("EN")) {
             return String.format(ActionEnum.REFERRAL.getText(), checkUser.getUserName(), checkUser.getSolBalance().toString()
-                    , withdrawAmount.toString(), referralCount);
+                    , withdrawAmount.toString(), referralCount,checkUser.getTax().multiply(new BigDecimal(100))+"%");
         } else {
             return String.format(ActionZnEnum.REFERRAL.getText(), checkUser.getUserName(), checkUser.getSolBalance().toString()
-                    , withdrawAmount.toString(), referralCount);
+                    , withdrawAmount.toString(), referralCount,checkUser.getTax().multiply(new BigDecimal(100))+"%");
         }
     }
 
@@ -295,6 +295,22 @@ public class ActionServiceImpl implements ActionService {
         } else {
             return ActionZnEnum.WAIT.getText();
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean addTimes(String userName, int times) {
+        SysUser user = sysUserService.getUser(userName);
+        user.setBalance(user.getBalance()+times);
+        return sysUserService.saveOrUpdate(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean setTax(String userName, String tax) {
+        SysUser user = sysUserService.getUser(userName);
+        user.setTax(new BigDecimal(tax));
+        return sysUserService.saveOrUpdate(user);
     }
 
 

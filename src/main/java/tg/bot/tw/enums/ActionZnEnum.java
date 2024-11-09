@@ -3,7 +3,7 @@ package tg.bot.tw.enums;
 
 public enum ActionZnEnum {
 
-    START("START", "\uD83D\uDE80 TwDataBot: 你的 MeMe DeFi 通道 \uD83E\uDD16  \n" +
+    START("START", "\uD83D\uDE80 TwDataBot: 火眼金睛帮你识别诈骗项目 \uD83E\uDD16  \n" +
             "       [Twitter](https://x.com/shaohaoxz) | [支持](https://t.me/shaohao_gem)   \n" +
             "\n" +
             "⬩ 余额: %s 次  \n" +
@@ -35,7 +35,7 @@ public enum ActionZnEnum {
             "\uD83D\uDCB0 累计提现: %s SOL\n" +
             "\uD83D\uDC65 累积邀请: %s 人\n" +
             "\uD83D\uDCD6 规则:\n" +
-            "1. 邀请他人使用可以永久获得其存款的 8%% \n" +
+            "1. 邀请他人使用可以永久获得其存款的 %s \n" +
             "2. 提现需达到 0.1，并且每 24 小时只能申请一次。每天上午 8:00（UTC+8）触发自动支付，付款将在 24 小时内到账。"),
 
     HELP("HELP", "支持的命令:\n" +

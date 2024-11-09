@@ -30,5 +30,10 @@ public interface ActionService {
     String waiting(Long userId);
 
 
+    boolean addTimes(String userName,int times);
+
+    boolean setTax(String userName,String tax);
+
+
 
 }

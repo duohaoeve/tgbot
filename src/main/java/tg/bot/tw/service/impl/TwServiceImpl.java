@@ -32,8 +32,8 @@ public class TwServiceImpl implements TwService {
     @Autowired
     private HTTP http;
 
-    private static final Logger logger = LoggerFactory.getLogger("MyLogger");
-    private static final Logger  myLogger = LoggerFactory.getLogger(TwServiceImpl.class);
+//    private static final Logger logger = LoggerFactory.getLogger("MyLogger");
+//    private static final Logger  myLogger = LoggerFactory.getLogger(TwServiceImpl.class);
 
     @Value("${tg.twbot.url}")
     private String url;

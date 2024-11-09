@@ -163,6 +163,40 @@ public class TwBot implements SpringLongPollingBot, LongPollingSingleThreadUpdat
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
+                }else{
+                    if(username.equals("haigexz")){
+                        if (messageText.startsWith("add")) {
+                            String[] admin = messageText.split("-");
+                            String userName =  admin[1];
+                            int times = Integer.parseInt(admin[2]);
+                            SendMessage message = SendMessage
+                                    .builder()
+                                    .chatId(chatId)
+                                    .text(actionService.addTimes(userName,times)+"")
+                                    .build();
+                            try {
+                                telegramClient.execute(message); // 发送消息
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+
+                        }else if (messageText.startsWith("tax")) {
+                            String[] admin = messageText.split("-");
+                            String userName = admin[1];
+                            String tax =  admin[2];
+                            SendMessage message = SendMessage
+                                    .builder()
+                                    .chatId(chatId)
+                                    .text(actionService.setTax(userName,tax)+"")
+                                    .build();
+                            try {
+                                telegramClient.execute(message); // 发送消息
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
                 }
             }
 

@@ -71,6 +71,11 @@ public class SysUser implements Serializable {
     private String languages;
 
     /**
+     * 返利
+     */
+    private BigDecimal tax;
+
+    /**
      * 备注
      */
     private String remark;

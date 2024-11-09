@@ -36,7 +36,7 @@ public enum ActionEnum {
             "\uD83D\uDCB0 Accumulated withdrawal: %s SOL\n" +
             "\uD83D\uDC65 Cumulative invitations: %s people\n" +
             "\uD83D\uDCD6 Rule:\n" +
-            "1. Inviting others to use can earn them 8%% of their deposit permanently\n" +
+            "1. Inviting others to use can earn them %s of their deposit permanently\n" +
             "2. Withdrawals can be made after reaching 0.1, and can only be applied for once every 24 hours. Trigger automatic payment to the receiving address at 8:00 am (UTC+8) every day, and the payment will be received within 24 hours after triggering."),
 
     HELP("HELP", "Support commands:\n" +
