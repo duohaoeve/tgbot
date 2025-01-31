@@ -2,7 +2,7 @@
 
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>C://logs/globle.log</file>
+        <file>tgbot.log</file>
         <encoder>
             <pattern>%d %p %c{1.} [%t] %m%n</pattern>
         </encoder>
@@ -15,11 +15,12 @@
         </encoder>
     </appender>
 
-    <logger name="MyLogger" level="INFO" additivity="false">
+
+    <root level="DEBUG">
+        <appender-ref ref="FILE" />
+    </root>
+
+    <logger name="ROOT" level="INFO">
         <appender-ref ref="MyAppender" />
     </logger>
-
-    <root level="INFO">
-        <appender-ref ref="MyAppender" />
-    </root>
 </configuration>
