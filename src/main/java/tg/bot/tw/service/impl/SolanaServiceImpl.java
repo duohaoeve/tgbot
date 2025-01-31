@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.p2p.solanaj.core.PublicKey;
 import org.p2p.solanaj.rpc.RpcClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tg.bot.tw.entity.DepositRecord;
@@ -22,6 +24,8 @@ public class SolanaServiceImpl implements SolanaService {
 
 
     private static String nodeUrl = "https://api.helius.xyz/v0/transactions";
+
+    private static final Logger logger = LoggerFactory.getLogger("ROOT");
 
     @Autowired
     private HTTP http;
@@ -40,6 +44,7 @@ public class SolanaServiceImpl implements SolanaService {
             long balance = client.getApi().getBalance(publicKey);
             res = BigDecimal.valueOf(balance).divide(BigDecimal.valueOf(1000000000),5, RoundingMode.HALF_UP);
         } catch (Exception e) {
+            logger.info("---------查询账户余额出错---------");
             e.printStackTrace();
         }
 
@@ -49,30 +54,37 @@ public class SolanaServiceImpl implements SolanaService {
     @Override
     public DepositRecord verifyTx(String tx) throws JsonProcessingException {
 
-        List<String> list = Collections.singletonList(tx); // 创建只读列表
-        hlReq req = new hlReq();
-        req.setTransactions(list); // 设置交易列表
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(req);
+        try {
+            List<String> list = Collections.singletonList(tx); // 创建只读列表
+            hlReq req = new hlReq();
+            req.setTransactions(list); // 设置交易列表
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonString = objectMapper.writeValueAsString(req);
 
-        String result = http.POST(nodeUrl,jsonString);
-        List<String> reslist = JSONArray.parseArray(result, String.class);
-        JSONObject jsonObject = JSONObject.parseObject(reslist.get(0));
-        Long timestamp = jsonObject.getLong("timestamp");
+            String result = http.POST(nodeUrl, jsonString);
+            List<String> reslist = JSONArray.parseArray(result, String.class);
+            JSONObject jsonObject = JSONObject.parseObject(reslist.get(0));
+            Long timestamp = jsonObject.getLong("timestamp");
 
-        System.out.println("timestamp:" +timestamp);
-        List<String> natlist = JSONArray.parseArray(jsonObject.getString("nativeTransfers"), String.class);
-        JSONObject nativeTransfer = JSONObject.parseObject(natlist.get(0));
+            System.out.println("timestamp:" + timestamp);
+            List<String> natlist = JSONArray.parseArray(jsonObject.getString("nativeTransfers"), String.class);
+            JSONObject nativeTransfer = JSONObject.parseObject(natlist.get(0));
 
-        String fromUserAccount = nativeTransfer.getString("fromUserAccount");
-        String toUserAccount = nativeTransfer.getString("toUserAccount");;
-        Long amount = nativeTransfer.getLong("amount");
-        BigDecimal amt = BigDecimal.valueOf(amount).divide(BigDecimal.valueOf(1000000000),5, RoundingMode.HALF_UP);
+            String fromUserAccount = nativeTransfer.getString("fromUserAccount");
+            String toUserAccount = nativeTransfer.getString("toUserAccount");
+            ;
+            Long amount = nativeTransfer.getLong("amount");
+            BigDecimal amt = BigDecimal.valueOf(amount).divide(BigDecimal.valueOf(1000000000), 5, RoundingMode.HALF_UP);
 
-        DepositRecord res = new DepositRecord();
-        res.setTx(tx).setAmount(amt).setSender(fromUserAccount).setReceiver(toUserAccount).setCreateDate(timestamp.intValue());
+            DepositRecord res = new DepositRecord();
+            res.setTx(tx).setAmount(amt).setSender(fromUserAccount).setReceiver(toUserAccount).setCreateDate(timestamp.intValue());
 
-        return res;
+            return res;
+        } catch (Exception e) {
+            logger.info("-------verifyTx出错----------");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
 
     }
 

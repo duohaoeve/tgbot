@@ -3,6 +3,8 @@ package tg.bot.tw.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import net.i2p.crypto.eddsa.Utils;
 import org.p2p.solanaj.core.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,12 +52,17 @@ public class ActionServiceImpl implements ActionService {
     @Autowired
     private DepositRecordService depositRecordService;
 
+    private static final Logger logger = LoggerFactory.getLogger("ROOT");
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String start(SysUser user) throws Exception {
         SysUser checkUser = sysUserService.checkUser(user.getUserId());
         Long balance = 0L;
+        if (user.getUserName() == null){
+            user.setUserName((user.getUserId()+"").replace("-", ""));
+        }
         String userName = user.getUserName();
         if (checkUser == null) {
             // 生成新的钱包账户
@@ -148,21 +155,25 @@ public class ActionServiceImpl implements ActionService {
         }
 
         SysUser user = sysUserService.checkUser(userId);
+
+        logger.info("verifyDeposit111----");
         try {
             DepositRecord record = solanaService.verifyTx(transactionId);
 
+            logger.info("verifyDeposit222----");
             if (record.getAmount().compareTo(BigDecimal.valueOf(0.1)) >= 0
                     && record.getReceiver().equals(user.getAddress())
                     && depositRecordService.checkTx(transactionId)) {
 
-                BigDecimal money = solanaService.getBalance(user.getAddress());
-                if (money.compareTo(record.getAmount()) < 0) {
-                    if (user.getLanguages() == null || user.getLanguages().equals("EN")) {
-                        return ActionEnum.VERIFY_FAILED.getText();
-                    } else {
-                        return ActionZnEnum.VERIFY_FAILED.getText();
-                    }
-                }
+                logger.info("verifyDeposit333----");
+//                BigDecimal money = solanaService.getBalance(user.getAddress());
+//                if (money.compareTo(record.getAmount()) < 0) {
+//                    if (user.getLanguages() == null || user.getLanguages().equals("EN")) {
+//                        return ActionEnum.VERIFY_FAILED.getText();
+//                    } else {
+//                        return ActionZnEnum.VERIFY_FAILED.getText();
+//                    }
+//                }
                 BigDecimal time = record.getAmount().multiply(BigDecimal.valueOf(1000));
                 Long times = time.setScale(0, BigDecimal.ROUND_DOWN).longValue();
                 user.setBalance(user.getBalance() + times).setUpdateDate(DateUtils.currentSecond());
@@ -191,6 +202,7 @@ public class ActionServiceImpl implements ActionService {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             if (user.getLanguages() == null || user.getLanguages().equals("EN")) {
                 return ActionEnum.VERIFY_FAILED.getText();
             } else {
