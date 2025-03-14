@@ -10,7 +10,7 @@ logging:
           mapper: debug
 task:
   poxy:
-    hostname: 119.28.55.50
+   hostname: # ip poxy adrress
     port: 10801
     userName: 98984
     passWord: 35133
@@ -19,7 +19,33 @@ task:
     maxRetryCount: 3
     # 预期状态码
     expectedStatusCode: 0
+tg:
+  twbot:
+    token:  # bot
+    url: # apiurl
+    key: # apikey
 
+crypto:
+  sol:
+    hlKey: # hlkey
+    jmKey: # diy key to crypto data
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: #  data url
+    username: #  username
+    password: #  password
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      oracle-pooled-prepared-statements: false
+      pool:
+        prepared-statement-cache-enabled: false
+        prepared-statement-cache-query-size: 0
+
+  jackson:
+    date-format: yyyy-MM-dd
+    time-zone: Asia/Shanghai
 
 mybatis:
   type-aliases-package: tg.bot.tw.entity
